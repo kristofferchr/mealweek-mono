@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    restart: always
+    networks:
+    - network1
+    environment:
+      POSTGRES_DB: mealer
+      POSTGRES_USER: ${DATABASE_USER:-postgres}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+    ports:
+    - ${DATABASE_PORT:-5432}:5432
+    #volumes:
+    #- db:/var/lib/postgresql/data
+
+  #volumes:
+  #db: {}
+  backend:
+
+    container_name: backend
+    image: backend
+    networks:
+      - network1
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/mealer?sslmode=disable
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+    - "3333:3333"
+
+networks:
+  network1:
+    external: true
+    name: mealer

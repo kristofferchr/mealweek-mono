@@ -1,0 +1,20 @@
+version: v1
+managed:
+  enabled: true
+  go_package_prefix:
+    default: github.com/kris456/mealweek-go-backend/gen
+plugins:
+- plugin: buf.build/community/timostamm-protobuf-ts:v2.9.1
+  out: ./frontend/gen/
+- plugin: buf.build/grpc/swift:v1.20.0
+  out: ios/Mealer/gen
+- plugin: buf.build/apple/swift:v1.25.1
+  out: ios/Mealer/gen
+- plugin: buf.build/protocolbuffers/go:v1.31.0
+  out: ./backend/gen
+  opt:
+  - paths=source_relative
+- plugin: buf.build/grpc/go:v1.3.0
+  out: ./backend/gen
+  opt:
+  - paths=source_relative

@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package meals.v1;
+
+import "google/protobuf/timestamp.proto";
+
+service MealsService {
+  rpc GetMeals(GetMealsRequest) returns (GetMealsResponse);
+  rpc CreateMeal(CreateMealRequest) returns (CreateMealResponse);
+  rpc DeleteMeal(DeleteMealRequest) returns (DeleteMealResponse);
+}
+
+message GetMealsRequest {}
+
+message GetMealsResponse {
+  repeated meal meals = 1;
+}
+
+message CreateMealRequest {
+  string name = 1;
+}
+
+message CreateMealResponse{
+  meal meal = 1;
+}
+
+message DeleteMealRequest {
+  string name = 1;
+}
+
+message DeleteMealResponse {}
+message meal {
+  int64 id = 1;
+  string name = 2;
+  string created_by = 3;
+}
+
+service PlannedMealsservice {
+  rpc GetPlannedMeals(GetPlannedMealsRequest) returns (GetPlannedMealsResponse);
+  rpc CreatePlannedMeal(CreatePlannedMealRequest) returns (CreatePlannedMealResponse);
+}
+
+message GetPlannedMealsRequest {
+  google.protobuf.Timestamp from = 1;
+  google.protobuf.Timestamp to = 2;
+}
+
+message GetPlannedMealsResponse {
+repeated PlannedMeal plannedMeals = 1;
+}
+
+message CreatePlannedMealRequest{
+  int64 mealId = 1;
+  google.protobuf.Timestamp date = 2;
+}
+
+message CreatePlannedMealResponse {
+  PlannedMeal plannedMeal = 1;
+}
+
+message PlannedMeal {
+  int64 id = 1;
+  google.protobuf.Timestamp date = 2;
+  meal meal = 3;
+}

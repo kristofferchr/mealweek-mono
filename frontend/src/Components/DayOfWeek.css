@@ -1,0 +1,10 @@
+.dayOfWeekButton {
+    color: black !important;
+    padding-top: -40px;
+    /*padding-left: 40px !important;*/
+    /*padding-right: 40px !important;§k*/
+}
+
+.selected-day {
+    background-color: lightgreen !important;
+}

@@ -1,0 +1,33 @@
+@startuml
+!define primary_key(x) <b><color:#b8861b><&key></color> x</b>
+!define foreign_key(x) <color:#aaaaaa><&key></color> x
+!define column(x) <color:#efefef><&media-record></color> x
+!define table(x) entity x << (T, white) >>
+
+table( user ) {
+  primary_key( id ): UUID
+  column( email ): VARCHAR
+  column(password) : VARCHAR
+}
+
+table( meal ) {
+  primary_key( id ): UUID
+  foreign_key( created_by_user_id ): INTEGER <<FK>>
+  column( name ): VARCHAR
+  column( created_at ): TIMESTAMP
+}
+
+table( planned_meal ) {
+    primary_key( id ): UUID
+    foreign_key( meal_id ): UUID <<FK>>
+    foreign_key( user_id ): UUID <<FK>>
+    column(date): DATE
+}
+
+planned_meal ||--|{ meal
+planned_meal ||--|{ user
+user ||--|{ meal
+
+
+
+@enduml

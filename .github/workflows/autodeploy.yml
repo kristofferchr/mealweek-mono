@@ -1,0 +1,105 @@
+name: autodeploy
+
+on:
+    push:
+        branches: ['main']
+
+jobs:
+  autodeploy-frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory:
+          ./frontend
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      REGISTRY: ghcr.io
+      IMAGE_NAME: ${{ github.repository }}-frontend
+      VITE_API_URL: "https://mealer.fly.dev"
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '19.x'
+    - run: npm ci
+    - run: npm run build --if-present
+    #            - run: npm test
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+      with:
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        build-args: |
+          "VITE_API_URL=${{ env.VITE_API_URL}}"
+
+    - name: Install flyctl via https://github.com/superfly/flyctl-actions
+      uses: superfly/flyctl-actions/setup-flyctl@master
+
+    - name: Deploy to fly.io
+      run: flyctl deploy --local-only --image ghcr.io/kris456/mealweek-frontend:main -t ${{ env.FLY_API_TOKEN }}
+    autodeploy-backend:
+        runs-on: ubuntu-latest
+        defaults:
+          run:
+            working-directory:
+              ./backend
+        env:
+            FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+            REGISTRY: ghcr.io
+            IMAGE_NAME: ${{ github.repository }}
+            VITE_API_URL: "https://mealer.fly.dev"
+
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Login to GitHub Container Registry
+              uses: docker/login-action@v1
+              with:
+                  registry: ${{ env.REGISTRY }}
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+            - name: Use Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '19.x'
+            - run: npm ci
+            - run: npm run build --if-present
+#            - run: npm test
+
+            - name: Extract metadata (tags, labels) for Docker
+              id: meta
+              uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+              with:
+                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+            - name: Build and push Docker image
+              uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+              with:
+                  context: .
+                  push: true
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
+
+            - name: Install flyctl via https://github.com/superfly/flyctl-actions
+              uses: superfly/flyctl-actions/setup-flyctl@master
+
+            - name: Deploy to fly.io
+              run: flyctl deploy --local-only --image ghcr.io/kris456/mealweek-frontend:main -t ${{ env.FLY_API_TOKEN }}
