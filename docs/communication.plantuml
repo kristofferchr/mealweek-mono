@@ -1,0 +1,13 @@
+@startuml
+title Kommunikasjon mellom komponentene
+
+node backend as "go backend"
+node ios as "ios app"
+node frontend as "React frontend"
+node nginx as "nginx reverse proxy"
+
+ios --> nginx : HTTP v2 grpc
+frontend --> nginx : HTTP v1 grpc-web
+nginx --> backend : grpc
+
+@enduml
