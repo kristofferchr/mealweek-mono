@@ -40,3 +40,7 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+    - name: Install flyctl via https://github.com/superfly/flyctl-actions
+      uses: superfly/flyctl-actions/setup-flyctl@master
+    - name: Deploy to fly.io
+      run: flyctl deploy --local-only --image ghcr.io/kristofferchr/mealweek-backend:${{ steps.meta.outputs.tags }} -t ${{ env.FLY_API_TOKEN }}
