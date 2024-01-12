@@ -43,5 +43,4 @@ jobs:
     - name: Install flyctl via https://github.com/superfly/flyctl-actions
       uses: superfly/flyctl-actions/setup-flyctl@master
     - name: Deploy to fly.io
-      working-directory: .
-      run: flyctl deploy --image ${{ steps.meta.outputs.tags[0] }} -t ${{ env.FLY_API_TOKEN }}
+      run: flyctl deploy --image ${{ steps.meta.outputs.tags.0 }} -t ${{ env.FLY_API_TOKEN }}
