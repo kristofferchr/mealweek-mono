@@ -42,5 +42,7 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
     - name: Install flyctl via https://github.com/superfly/flyctl-actions
       uses: superfly/flyctl-actions/setup-flyctl@master
+    - name: Echo tags
+      run: echo ${{ steps.meta.outputs.tags }}
     - name: Deploy to fly.io
       run: flyctl deploy --image ${{ steps.meta.outputs.tags }} -t ${{ env.FLY_API_TOKEN }}
