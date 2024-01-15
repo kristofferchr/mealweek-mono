@@ -3,7 +3,7 @@ name: autodeploy
 on:
     push:
       tags:
-      - "frontend/*.*.*"
+      - "frontend/*"
 
 jobs:
   autodeploy-frontend:
@@ -15,7 +15,7 @@ jobs:
     env:
       FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
       REGISTRY: ghcr.io
-      IMAGE_NAME: ${{ github.repository }}-frontend
+      IMAGE_NAME: ${{ github.repository_owner }}/mealweek-frontend
       VITE_API_URL: "https://mealer.fly.dev"
 
     steps:
@@ -55,4 +55,4 @@ jobs:
       uses: superfly/flyctl-actions/setup-flyctl@master
 
     - name: Deploy to fly.io
-      run: flyctl deploy --local-only --image ghcr.io/kris456/mealweek-frontend:main -t ${{ env.FLY_API_TOKEN }}
+      run: flyctl deploy --local-only --image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest -t ${{ env.FLY_API_TOKEN }}
