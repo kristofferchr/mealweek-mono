@@ -45,4 +45,4 @@ jobs:
     - name: Echo tags
       run: echo "${{ steps.meta.outputs.tags }}"
     - name: Deploy to fly.io
-      run: flyctl deploy --image ${{ steps.meta.outputs.tags }} -t ${{ env.FLY_API_TOKEN }}
+      run: flyctl deploy --image ${{ env.IMAGE_NAME }}:latest -t ${{ env.FLY_API_TOKEN }}
