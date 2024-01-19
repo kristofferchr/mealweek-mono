@@ -2,6 +2,8 @@ name: autodeploy
 
 on:
     push:
+      branches-ignore:
+      - "main"
       tags:
       - "frontend/*"
 
@@ -51,10 +53,12 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         build-args: |
-          "VITE_API_URL=${{ env.VITE_API_URL}}"
+          "BACKEND_HOST=http://mealer-backend.internal:3333"
 
     - name: Install flyctl via https://github.com/superfly/flyctl-actions
+      if: github.ref == 'refs/heads/master'
       uses: superfly/flyctl-actions/setup-flyctl@master
 
     - name: Deploy to fly.io
+      if: github.ref == 'refs/heads/master'
       run: flyctl deploy --local-only --image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest -t ${{ env.FLY_API_TOKEN }}
