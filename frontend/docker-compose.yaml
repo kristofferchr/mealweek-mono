@@ -4,6 +4,8 @@ services:
   app:
     container_name: app
     image: app
+    environment:
+    - BACKEND_HOST="http://backend:3333"
     build:
       context: .
       dockerfile: Dockerfile
@@ -11,7 +13,7 @@ services:
     - network1
     restart: always
     ports:
-    - "8080:8080"
+    - "8080:80"
 
 
 networks:
