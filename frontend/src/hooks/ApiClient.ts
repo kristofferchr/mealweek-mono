@@ -7,7 +7,7 @@ import { MealsServiceClient, PlannedMealsserviceClient } from '../../gen/proto/m
 import { Timestamp } from '../../gen/google/protobuf/timestamp';
 
 export class ApiClient {
-  transport = new GrpcWebFetchTransport({
+  private transport = new GrpcWebFetchTransport({
     baseUrl: `/api`
   });
 
